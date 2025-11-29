@@ -1,4 +1,4 @@
-import { createSignal, onMount, Show } from 'solid-js';
+import { createSignal, onMount, onCleanup, Show } from 'solid-js';
 import { gameActions } from '../stores/gameStore';
 import { GAME_MODE_CONFIGS } from '../types';
 import { assetLoader } from '../utils/assetLoader';
@@ -13,7 +13,20 @@ const TitleScreen = () => {
   onMount(() => {
     // Start loading assets in background immediately
     assetLoader.startLoading();
+    window.addEventListener('keydown', handleKeyDown);
   });
+
+  onCleanup(() => {
+    window.removeEventListener('keydown', handleKeyDown);
+  });
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' && !showSettings()) {
+      handleStart();
+    } else if (e.key === 'Escape') {
+      setShowSettings(!showSettings());
+    }
+  };
 
   const handleStart = () => {
     if (!assetLoader.isReady()) {
