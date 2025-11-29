@@ -29,6 +29,14 @@ const ResultScreen = () => {
     return '#f44336';
   };
 
+  const getDuration = () => {
+    const s = session();
+    if (s?.endTime && s?.startTime) {
+      return Math.floor((s.endTime - s.startTime) / 1000);
+    }
+    return 0;
+  };
+
   return (
     <div class="result-screen">
 
@@ -85,8 +93,7 @@ const ResultScreen = () => {
 
         <div class="session-stats">
           <p>Trials: {session()?.trials.length}</p>
-          <p>Duration: {session()?.endTime && session()?.startTime ?
-            Math.floor((session()!.endTime - session()!.startTime) / 1000) : 0}s</p>
+          <p>Duration: {getDuration()}s</p>
         </div>
       </div>
 
