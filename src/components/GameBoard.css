@@ -1,0 +1,138 @@
+.game-board {
+  width: 100vw;
+  height: 100vh;
+  background: #1a1a1a;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around
+}
+
+
+
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 10px;
+  width: 100%;
+  max-width: 414px;
+  aspect-ratio: 1 / 1;
+  margin: 20px auto;
+  position: relative;
+
+}
+
+.grid-square {
+  width: 75%;
+  height: 75%;
+  justify-self: center;
+  align-self: center;
+  border: 3px solid #444;
+  border-radius: 8px;
+  background: #2a2a2a;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid-square.active {
+  background: #4CAF50;
+  border-color: #45a049;
+  box-shadow: 0 0 20px rgba(76, 175, 80, 0.6);
+  transform: scale(1.1);
+}
+
+.colored-square {
+  width: 80px;
+  height: 80px;
+  border-radius: 4px;
+}
+
+.center-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.sound-indicator {
+  font-size: 72px;
+  font-weight: bold;
+  color: #FFC107;
+  text-shadow: 0 0 20px rgba(255, 193, 7, 0.8);
+  animation: pulse 0.5s ease-in-out;
+  padding: 20px 40px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  border: 3px solid #FFC107;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.visual-cue {
+  font-size: 48px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.arithmetic-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.arithmetic-display .number {
+  font-size: 64px;
+  font-weight: bold;
+  color: #4CAF50;
+}
+
+.arithmetic-display .operation {
+  font-size: 32px;
+  color: #aaa;
+  text-transform: uppercase;
+}
+
+
+
+.controls-hint {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  font-size: 16px;
+}
+
+.controls-hint span {
+  padding: 8px 16px;
+  background: #3a3a3a;
+  border-radius: 4px;
+  border: 2px solid #555;
+  transition: all 0.2s ease;
+}
+
+.controls-hint span.active {
+  border-color: rgba(100, 149, 237, 0.8);
+  background-color: rgba(100, 149, 237, 0.2);
+  color: #fff;
+  box-shadow: 0 0 10px rgba(100, 149, 237, 0.3);
+}
