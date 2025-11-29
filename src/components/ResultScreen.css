@@ -3,7 +3,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px;
   max-width: 900px;
 }
 
@@ -12,32 +11,22 @@
   padding: 40px;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-  margin: 20px 0;
-  width: 100%;
+  width: calc(100vw - 30px);
 }
 
-.result-header {
-  text-align: center;
-  margin-bottom: 30px;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 20px;
-}
 
-.result-header h2 {
-  color: #333;
-  margin-bottom: 10px;
-}
-
-.result-header p {
-  color: #666;
-  font-size: 18px;
-}
 
 .scores {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 20px;
-  margin: 30px 0;
+  margin: 0 0 30px 0;
+}
+
+.modalities {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  justify-content: center;
 }
 
 .total-score {

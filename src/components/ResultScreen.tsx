@@ -31,13 +31,9 @@ const ResultScreen = () => {
 
   return (
     <div class="result-screen">
-      <h1 class="title">Session Complete!</h1>
 
       <div class="results-container">
-        <div class="result-header">
-          <h2>{GAME_MODE_CONFIGS[session()?.gameMode || 'dual-nback'].name}</h2>
-          <p>Level: {session()?.nBackLevel}-back</p>
-        </div>
+
 
         <div class="scores">
           <div class="total-score" style={{ color: getScoreColor(session()?.totalScore || 0) }}>
@@ -45,33 +41,37 @@ const ResultScreen = () => {
             <div class="score-label">Total Score</div>
           </div>
 
-          {session()?.positionScore !== undefined && (
-            <div class="modality-score">
-              <div class="score-value">{session()!.positionScore!.toFixed(1)}%</div>
-              <div class="score-label">Position</div>
-            </div>
-          )}
+          <div class="modalities">
 
-          {session()?.soundScore !== undefined && (
-            <div class="modality-score">
-              <div class="score-value">{session()!.soundScore!.toFixed(1)}%</div>
-              <div class="score-label">Sound</div>
-            </div>
-          )}
+            {session()?.positionScore !== undefined && (
+              <div class="modality-score">
+                <div class="score-value">{session()!.positionScore!.toFixed(1)}%</div>
+                <div class="score-label">Position</div>
+              </div>
+            )}
 
-          {session()?.colorScore !== undefined && (
-            <div class="modality-score">
-              <div class="score-value">{session()!.colorScore!.toFixed(1)}%</div>
-              <div class="score-label">Color</div>
-            </div>
-          )}
+            {session()?.soundScore !== undefined && (
+              <div class="modality-score">
+                <div class="score-value">{session()!.soundScore!.toFixed(1)}%</div>
+                <div class="score-label">Sound</div>
+              </div>
+            )}
 
-          {session()?.arithmeticScore !== undefined && (
-            <div class="modality-score">
-              <div class="score-value">{session()!.arithmeticScore!.toFixed(1)}%</div>
-              <div class="score-label">Arithmetic</div>
-            </div>
-          )}
+            {session()?.colorScore !== undefined && (
+              <div class="modality-score">
+                <div class="score-value">{session()!.colorScore!.toFixed(1)}%</div>
+                <div class="score-label">Color</div>
+              </div>
+            )}
+
+            {session()?.arithmeticScore !== undefined && (
+              <div class="modality-score">
+                <div class="score-value">{session()!.arithmeticScore!.toFixed(1)}%</div>
+                <div class="score-label">Arithmetic</div>
+              </div>
+            )}
+
+          </div>
         </div>
 
         {!gameStore.isManualMode && (

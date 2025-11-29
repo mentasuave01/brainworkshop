@@ -69,7 +69,8 @@ button:disabled {
   color: #666;
 }
 
-input, select {
+input,
+select {
   font-family: inherit;
   font-size: 16px;
   padding: 10px;
@@ -78,7 +79,8 @@ input, select {
   margin: 10px;
 }
 
-input:focus, select:focus {
+input:focus,
+select:focus {
   outline: none;
   border-color: #4CAF50;
 }

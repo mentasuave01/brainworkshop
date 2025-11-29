@@ -24,8 +24,8 @@
 }
 
 .grid-square {
-  width: 75%;
-  height: 75%;
+  width: 87.5%;
+  height: 87.5%;
   justify-self: center;
   align-self: center;
   border: 3px solid #444;
