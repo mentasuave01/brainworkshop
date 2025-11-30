@@ -101,8 +101,8 @@ const TitleScreen = () => {
         <div class="profile-info">
           <Show when={profile()} fallback={<p>No Profile Selected</p>}>
             <p><strong>Profile:</strong> {profile()?.name}</p>
-            <p><strong>Current Level:</strong> {profile()?.currentNBackLevel}-back</p>
-            <p><strong>Game Mode:</strong> {GAME_MODE_CONFIGS[profile()?.currentGameMode || 'dual-nback'].name}</p>
+            <p><strong>Level:</strong> {profile()?.currentNBackLevel}-back</p>
+            <p><strong>Mode:</strong> {GAME_MODE_CONFIGS[profile()?.currentGameMode || 'dual-nback'].name}</p>
           </Show>
         </div>
 

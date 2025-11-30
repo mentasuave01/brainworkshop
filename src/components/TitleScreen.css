@@ -41,8 +41,6 @@
   border-radius: 12px;
   margin: 20px 0;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  min-width: 400px;
 }
 
 .profile-info p {
