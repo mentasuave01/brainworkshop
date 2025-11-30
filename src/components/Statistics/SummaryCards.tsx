@@ -36,7 +36,7 @@ const SummaryCards: Component = () => {
     });
 
     return (
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div class="bg-gray-800 p-4 rounded-lg shadow-lg border-l-4 border-blue-500">
                 <div class="text-gray-400 text-sm uppercase tracking-wider">Current Level</div>
                 <div class="text-3xl font-bold text-white">{stats()?.currentLevel || 1}<span class="text-lg text-gray-500 ml-1">-back</span></div>

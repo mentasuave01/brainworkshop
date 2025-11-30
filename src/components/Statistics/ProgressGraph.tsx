@@ -87,7 +87,7 @@ const ProgressGraph: Component = () => {
     });
 
     return (
-        <div class="w-full h-96 bg-gray-800 p-4 rounded-lg shadow-lg">
+        <div class="w-full h-96 bg-gray-800 p-2 sm:p-4 rounded-lg shadow-lg">
             <h2 class="text-xl font-bold text-white mb-4">Daily Progress</h2>
             <Show when={graphData().data.length > 0} fallback={
                 <div class="h-80 w-full flex flex-col items-center justify-center text-gray-400">

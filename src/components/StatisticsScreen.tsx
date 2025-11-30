@@ -16,18 +16,21 @@ const StatisticsScreen: Component<StatisticsScreenProps> = (props) => {
         <div class="min-h-screen bg-gray-900 text-white flex flex-col">
             {/* Header - Fixed Top */}
             <div class="bg-gray-800 shadow-md p-4 sticky top-0 z-10">
-                <div class="max-w-6xl mx-auto w-full flex items-center justify-between">
-                    <button
-                        onClick={props.onBack}
-                        class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition-colors flex items-center gap-2 shadow-sm"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-                        </svg>
-                        Back to Menu
-                    </button>
+                <div class="max-w-6xl mx-auto w-full flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+                    <div class="w-full sm:w-auto flex justify-between items-center">
+                        <button
+                            onClick={props.onBack}
+                            class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg transition-colors flex items-center gap-2 shadow-sm text-sm sm:text-base"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                            </svg>
+                            Back
+                        </button>
+                        <h1 class="text-xl font-bold text-white sm:hidden">Statistics</h1>
+                    </div>
                     <h1 class="text-2xl font-bold text-white hidden sm:block">Statistics & Progress</h1>
-                    <div class="w-32"></div> {/* Spacer for centering */}
+                    <div class="w-32 hidden sm:block"></div> {/* Spacer for centering */}
                 </div>
             </div>
 
@@ -45,8 +48,8 @@ const StatisticsScreen: Component<StatisticsScreenProps> = (props) => {
                         <button
                             onClick={() => setActiveTab('dashboard')}
                             class={`px-4 md:px-6 py-2 rounded-md transition-colors text-sm md:text-base font-medium ${activeTab() === 'dashboard'
-                                    ? 'bg-blue-600 text-white shadow'
-                                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                                ? 'bg-blue-600 text-white shadow'
+                                : 'text-gray-400 hover:text-white hover:bg-gray-700'
                                 }`}
                         >
                             Dashboard
@@ -54,8 +57,8 @@ const StatisticsScreen: Component<StatisticsScreenProps> = (props) => {
                         <button
                             onClick={() => setActiveTab('history')}
                             class={`px-4 md:px-6 py-2 rounded-md transition-colors text-sm md:text-base font-medium ${activeTab() === 'history'
-                                    ? 'bg-blue-600 text-white shadow'
-                                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                                ? 'bg-blue-600 text-white shadow'
+                                : 'text-gray-400 hover:text-white hover:bg-gray-700'
                                 }`}
                         >
                             History
@@ -63,8 +66,8 @@ const StatisticsScreen: Component<StatisticsScreenProps> = (props) => {
                         <button
                             onClick={() => setActiveTab('trends')}
                             class={`px-4 md:px-6 py-2 rounded-md transition-colors text-sm md:text-base font-medium ${activeTab() === 'trends'
-                                    ? 'bg-blue-600 text-white shadow'
-                                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                                ? 'bg-blue-600 text-white shadow'
+                                : 'text-gray-400 hover:text-white hover:bg-gray-700'
                                 }`}
                         >
                             Trends
@@ -72,8 +75,8 @@ const StatisticsScreen: Component<StatisticsScreenProps> = (props) => {
                         <button
                             onClick={() => setActiveTab('export')}
                             class={`px-4 md:px-6 py-2 rounded-md transition-colors text-sm md:text-base font-medium ${activeTab() === 'export'
-                                    ? 'bg-blue-600 text-white shadow'
-                                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                                ? 'bg-blue-600 text-white shadow'
+                                : 'text-gray-400 hover:text-white hover:bg-gray-700'
                                 }`}
                         >
                             Export
@@ -126,3 +129,4 @@ const StatisticsScreen: Component<StatisticsScreenProps> = (props) => {
 };
 
 export default StatisticsScreen;
+// Force rebuild

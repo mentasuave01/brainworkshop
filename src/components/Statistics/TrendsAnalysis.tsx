@@ -94,7 +94,7 @@ const TrendsAnalysis: Component = () => {
     });
 
     return (
-        <div class="w-full h-96 bg-gray-800 p-4 rounded-lg shadow-lg">
+        <div class="w-full h-96 bg-gray-800 p-2 sm:p-4 rounded-lg shadow-lg">
             <h2 class="text-xl font-bold text-white mb-4">Performance by Modality</h2>
             <div class="relative h-80 w-full">
                 <div ref={chartContainer} class="ct-chart ct-perfect-fourth" />
