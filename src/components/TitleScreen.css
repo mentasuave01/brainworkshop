@@ -8,13 +8,6 @@
   position: relative;
 }
 
-.top-controls {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  gap: 15px;
-}
 
 .icon-button {
   background: white;
@@ -147,4 +140,13 @@
   border-radius: 4px;
   font-size: 14px;
   color: #333;
+}
+
+.title-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-content: center;
+  gap: 5px;
+
 }
