@@ -49,37 +49,40 @@ This is a complete TypeScript + Solid.js port of Brain Workshop that runs in the
 - [x] Daily statistics tracking
 - [x] Configuration persistence
 
+### Statistics & Visualization
+- [x] Progress graph (daily n-back averages over time)
+- [x] Export statistics to CSV/tab-delimited format
+- [x] Session history viewer
+- [x] Performance trends analysis
+
 ### Build System
 - [x] Vite configuration
 - [x] Development server
 - [x] Production build setup
 - [x] Hot module replacement
 
+### Profile Management
+- [x] Profile selection UI on title screen
+- [x] Create new profile dialog
+- [x] Delete profile functionality
+- [x] Profile switcher component
+
+### Settings & Configuration
+- [x] Settings panel/screen
+- [x] Adjust game configuration options:
+  - [x] Trials per session
+  - [x] Time per trial
+  - [x] Threshold values
+  - [x] Sound set selection
+  - [x] Enable/disable music
+  - [x] Fullscreen toggle
+  - [x] Black background option
+  - [x] Jaeggi mode toggle
+
 ## 🚧 Pending Features (Future Enhancements)
 
 ### Statistics & Visualization
-- [ ] Progress graph (daily n-back averages over time)
-- [ ] Export statistics to CSV/tab-delimited format
-- [ ] Session history viewer
-- [ ] Performance trends analysis
-
-### Profile Management
-- [ ] Profile selection UI on title screen
-- [ ] Create new profile dialog
-- [ ] Delete profile functionality
-- [ ] Profile switcher component
-
-### Settings & Configuration
-- [ ] Settings panel/screen
-- [ ] Adjust game configuration options:
-  - [ ] Trials per session
-  - [ ] Time per trial
-  - [ ] Threshold values
-  - [ ] Sound set selection
-  - [ ] Enable/disable music
-  - [ ] Fullscreen toggle
-  - [ ] Black background option
-  - [ ] Jaeggi mode toggle
+- [ ] Improve UI/UX of statistics dashboard
 
 ### Manual Mode Enhancements
 - [ ] Manual controls overlay during gameplay
@@ -211,9 +214,8 @@ None currently! The core application is stable and working.
 
 ### High Priority
 1. Add statistics graph visualization
-2. Create settings panel
-3. Implement profile management UI
-4. Add manual mode controls
+2. Add manual mode controls
+3. Mobile responsive design
 
 ### Medium Priority
 5. Mobile responsive design

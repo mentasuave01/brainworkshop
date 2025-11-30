@@ -10,11 +10,8 @@ const App = () => {
     // Load saved data from localStorage
     gameActions.loadFromLocalStorage();
 
-    // Create a default profile if none exists
-    if (gameStore.profiles.length === 0) {
-      const profileId = gameActions.createProfile('Default');
-      gameActions.setActiveProfile(profileId);
-    } else if (!gameStore.activeProfileId && gameStore.profiles.length > 0) {
+    // If profiles exist but none is active, set the first one as active
+    if (!gameStore.activeProfileId && gameStore.profiles.length > 0) {
       gameActions.setActiveProfile(gameStore.profiles[0].id);
     }
   });

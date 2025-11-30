@@ -1,0 +1,132 @@
+.profile-manager-container {
+    padding: 10px 0;
+}
+
+.force-create-message {
+    margin-bottom: 20px;
+    color: #aaa;
+    text-align: center;
+}
+
+.profile-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.profile-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #252525;
+    border-radius: 8px;
+    border: 1px solid #333;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.profile-item:hover {
+    background-color: #333;
+    border-color: #444;
+}
+
+.profile-item.active {
+    background-color: #2c3e50;
+    border-color: #3498db;
+}
+
+.profile-info-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.profile-name {
+    font-weight: bold;
+    color: #fff;
+    font-size: 1.1rem;
+}
+
+.profile-details {
+    font-size: 0.85rem;
+    color: #aaa;
+}
+
+.profile-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.delete-button {
+    background: none;
+    border: none;
+    color: #e74c3c;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.delete-button:hover {
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+.create-profile-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+
+.create-profile-section h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    color: #ddd;
+}
+
+.create-profile-form {
+    display: flex;
+    gap: 10px;
+}
+
+.create-profile-form input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background-color: #222;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.create-profile-form input:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+.create-button {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.create-button:hover {
+    background-color: #2980b9;
+}
+
+.create-button:disabled {
+    background-color: #555;
+    cursor: not-allowed;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 30px;
+    color: #888;
+}

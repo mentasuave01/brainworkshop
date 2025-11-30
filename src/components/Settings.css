@@ -2,47 +2,38 @@
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   z-index: 1000;
-  animation: fadeIn 0.2s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  backdrop-filter: blur(5px);
 }
 
 .settings-modal {
-  background: white;
+  background-color: #1a1a1a;
+  border: 1px solid #333;
   border-radius: 12px;
   width: 90%;
   max-width: 600px;
-  max-height: 85vh;
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease-out;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  animation: modalFadeIn 0.3s ease-out;
 }
 
-@keyframes slideUp {
+@keyframes modalFadeIn {
   from {
-    transform: translateY(50px);
     opacity: 0;
+    transform: translateY(20px);
   }
 
   to {
-    transform: translateY(0);
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -50,83 +41,79 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
-  border-bottom: 2px solid #eee;
+  padding: 20px 20px 0 20px;
+  border-bottom: 1px solid #333;
 }
 
-.settings-header h2 {
-  margin: 0;
-  color: #333;
-  font-size: 24px;
+.settings-tabs {
+  display: flex;
+  gap: 20px;
+}
+
+.tab-button {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 10px 5px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab-button:hover {
+  color: #ddd;
+}
+
+.tab-button.active {
+  color: #4CAF50;
+  border-bottom-color: #4CAF50;
+}
+
+.tab-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .close-button {
   background: none;
   border: none;
-  font-size: 32px;
-  color: #999;
+  color: #888;
+  font-size: 24px;
   cursor: pointer;
   padding: 0;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s;
+  line-height: 1;
+  transition: color 0.2s;
+  margin-bottom: 10px;
 }
 
 .close-button:hover {
-  background: #f0f0f0;
-  color: #333;
-  transform: none;
-  box-shadow: none;
+  color: #fff;
 }
 
 .settings-content {
-  flex: 1;
+  padding: 20px;
   overflow-y: auto;
-  overflow-x: hidden;
-  padding: 24px;
+  flex: 1;
 }
 
 .settings-section {
-  margin-bottom: 32px;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #333;
 }
 
 .settings-section:last-child {
+  border-bottom: none;
   margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 .settings-section h3 {
-  margin: 0 0 16px 0;
-  color: #333;
-  font-size: 18px;
-  border-bottom: 2px solid #4CAF50;
-  padding-bottom: 8px;
-}
-
-.settings-section select {
-  width: 100%;
-  padding: 12px;
-  font-size: 16px;
-  border: 2px solid #ddd;
-  border-radius: 6px;
-  background: white;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-
-.settings-section select:focus {
-  outline: none;
-  border-color: #4CAF50;
-}
-
-.settings-section .description {
-  margin-top: 8px;
-  font-size: 14px;
-  color: #666;
-  font-style: italic;
+  margin: 0 0 15px 0;
+  color: #ddd;
+  font-size: 1.1rem;
 }
 
 .settings-section label {
@@ -134,92 +121,68 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
-  padding: 12px;
-  background: #f9f9f9;
-  border-radius: 6px;
+  color: #aaa;
 }
 
-.settings-section label span:first-child {
-  font-weight: 500;
-  color: #333;
+.settings-section label.checkbox-label {
+  justify-content: flex-start;
+  gap: 10px;
+  cursor: pointer;
 }
 
-.settings-section label input[type="number"],
-.settings-section label input[type="range"] {
-  width: 120px;
-  padding: 8px;
-  border: 2px solid #ddd;
+.settings-section input[type="number"] {
+  background-color: #222;
+  border: 1px solid #444;
+  color: white;
+  padding: 5px 10px;
   border-radius: 4px;
-  font-size: 14px;
+  width: 60px;
 }
 
-.settings-section label input[type="range"] {
-  width: 150px;
+.settings-section select {
+  width: 100%;
+  background-color: #222;
+  border: 1px solid #444;
+  color: white;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
 }
 
-.checkbox-label {
-  cursor: pointer;
-  user-select: none;
-}
-
-.checkbox-label input[type="checkbox"] {
-  width: auto;
-  margin-right: 12px;
-  cursor: pointer;
-  width: 20px;
-  height: 20px;
-}
-
-.range-value {
-  margin-left: 12px;
-  font-weight: bold;
-  color: #4CAF50;
-  min-width: 40px;
-  text-align: right;
-}
-
-.profile-info {
-  background: #f9f9f9;
-  padding: 16px;
-  border-radius: 6px;
-}
-
-.profile-info p {
-  margin: 8px 0;
-  color: #333;
-}
-
-.profile-info strong {
-  color: #4CAF50;
+.settings-section .description {
+  font-size: 0.9rem;
+  color: #888;
+  margin: 0;
+  font-style: italic;
 }
 
 .settings-footer {
-  padding: 20px 24px;
-  border-top: 2px solid #eee;
+  padding: 20px;
+  border-top: 1px solid #333;
   display: flex;
   justify-content: flex-end;
 }
 
 .settings-footer button {
-  padding: 12px 32px;
-  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
 }
 
-/* Scrollbar styling */
-.settings-content::-webkit-scrollbar {
-  width: 8px;
+.settings-footer button:hover {
+  background-color: #45a049;
 }
 
-.settings-content::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
+.profile-info p {
+  margin: 5px 0;
+  color: #aaa;
 }
 
-.settings-content::-webkit-scrollbar-thumb {
-  background: #4CAF50;
-  border-radius: 4px;
-}
-
-.settings-content::-webkit-scrollbar-thumb:hover {
-  background: #45a049;
+.profile-info strong {
+  color: #fff;
 }

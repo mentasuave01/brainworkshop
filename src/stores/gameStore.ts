@@ -83,6 +83,21 @@ export const gameActions = {
     gameActions.saveToLocalStorage();
   },
 
+  deleteProfile(profileId: string) {
+    setGameStore('profiles', (profiles) => profiles.filter((p) => p.id !== profileId));
+
+    // If active profile is deleted, switch to another one or null
+    if (gameStore.activeProfileId === profileId) {
+      const remainingProfiles = gameStore.profiles;
+      if (remainingProfiles.length > 0) {
+        setGameStore('activeProfileId', remainingProfiles[0].id);
+      } else {
+        setGameStore('activeProfileId', null);
+      }
+    }
+    gameActions.saveToLocalStorage();
+  },
+
   // Session management
   startNewSession(gameMode?: GameMode, manualMode: boolean = false) {
     const profile = gameActions.getActiveProfile();

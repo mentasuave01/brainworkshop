@@ -17,7 +17,7 @@ A modern web-based port of Brain Workshop, an N-Back training application for co
 
 - **Adaptive Level Adjustment**: Automatically increases or decreases difficulty based on performance
 - **Multiple Profiles**: Support for multiple user profiles with separate statistics
-- **Statistics Tracking**: Track your progress with daily statistics and session history
+- **Statistics Tracking**: Comprehensive dashboard with progress graphs, session history, performance trends, and data export (CSV/TSV)
 - **Manual Mode**: Customize session parameters for experimentation
 - **Jaeggi Mode**: Emulates the protocol from the original research study
 - **Local Storage**: All data saved in browser localStorage (no server required)
@@ -85,7 +85,9 @@ brainworkshop/
 │   ├── components/        # UI components
 │   │   ├── TitleScreen.tsx
 │   │   ├── GameBoard.tsx
-│   │   └── ResultScreen.tsx
+│   │   ├── ResultScreen.tsx
+│   │   ├── Settings.tsx
+│   │   └── ProfileManager.tsx
 │   ├── stores/            # Solid.js stores for state management
 │   │   └── gameStore.ts
 │   ├── types/             # TypeScript type definitions
@@ -152,17 +154,16 @@ export const DEFAULT_CONFIG: GameConfig = {
 
 ## Future Enhancements
 
+### Statistics & Visualization
+- [ ] Improve UI/UX of statistics dashboard
+
 ### Pending Features
 
-- [ ] Statistics graph visualization
-- [ ] Profile management UI (create/switch/delete profiles)
-- [ ] Settings panel for configuration
 - [ ] Manual mode controls (adjust n-back, trials, speed)
 - [ ] Variable N-Back mode
 - [ ] Crab Back mode
 - [ ] Multi-stimulus mode
 - [ ] Responsive design for mobile devices
-- [ ] Export statistics to CSV
 - [ ] Custom sound sets
 - [ ] Background music between sessions
 
