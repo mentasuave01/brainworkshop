@@ -1,10 +1,10 @@
 import { Component, createEffect, onCleanup, createMemo, Show } from 'solid-js';
-import Chart from 'chart.js/auto';
+import { LineChart, Svg } from 'chartist';
 import { gameStore } from '../../stores/gameStore';
 
 const ProgressGraph: Component = () => {
-    let canvasRef: HTMLCanvasElement | undefined;
-    let chartInstance: Chart | null = null;
+    let chartContainer: HTMLDivElement | undefined;
+    let chartInstance: LineChart | null = null;
 
     const activeProfile = createMemo(() =>
         gameStore.profiles.find(p => p.id === gameStore.activeProfileId)
@@ -26,82 +26,63 @@ const ProgressGraph: Component = () => {
     });
 
     createEffect(() => {
-        if (!canvasRef) return;
+        if (!chartContainer) return;
 
         const { labels, data } = graphData();
 
         if (chartInstance) {
-            chartInstance.destroy();
+            chartInstance.detach();
         }
 
-        const ctx = canvasRef.getContext('2d');
-        if (!ctx) return;
+        // Chartist requires a container element, not a canvas
+        // We'll need to change the ref to a div in the JSX
+        // But for now let's assume we change the JSX too.
+        // Wait, I need to change the JSX to use a div instead of canvas.
+        // Let's do that in a separate step or handle it here if I can replace the whole return.
+        // The tool allows replacing a chunk.
+        // I will replace the effect first, then the JSX.
 
-        chartInstance = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Average N-Back Level',
-                    data: data.map(d => d.y),
-                    borderColor: 'rgb(75, 192, 192)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    tension: 0.1,
-                    fill: true,
-                    pointRadius: 6,
-                    pointHoverRadius: 8
-                }]
+        // Actually, Chartist needs a selector or a DOM element.
+        // I can pass the element directly.
+
+        const chart = new LineChart(chartContainer, {
+            labels: labels,
+            series: [data.map(d => d.y)]
+        }, {
+            low: 0,
+            showArea: true,
+            showPoint: true,
+            fullWidth: true,
+            axisY: {
+                onlyInteger: true,
+                offset: 20
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'N-Back Level',
-                            color: '#9ca3af'
-                        },
-                        grid: {
-                            color: '#374151'
-                        },
-                        ticks: {
-                            color: '#9ca3af'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Date',
-                            color: '#9ca3af'
-                        },
-                        grid: {
-                            color: '#374151'
-                        },
-                        ticks: {
-                            color: '#9ca3af'
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: '#e5e7eb'
-                        }
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                    }
-                }
+            chartPadding: {
+                right: 40
             }
         });
+
+        // Animation
+        chart.on('draw', function (data: any) {
+            if (data.type === 'line' || data.type === 'area') {
+                data.element.animate({
+                    d: {
+                        begin: 2000 * data.index,
+                        dur: 2000,
+                        from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
+                        to: data.path.clone().stringify(),
+                        easing: Svg.Easing.easeOutQuint
+                    }
+                });
+            }
+        });
+
+        chartInstance = chart;
     });
 
     onCleanup(() => {
         if (chartInstance) {
-            chartInstance.destroy();
+            chartInstance.detach();
         }
     });
 
@@ -118,7 +99,7 @@ const ProgressGraph: Component = () => {
                 </div>
             }>
                 <div class="relative h-80 w-full">
-                    <canvas ref={canvasRef} />
+                    <div ref={chartContainer} class="ct-chart ct-perfect-fourth" />
                 </div>
             </Show>
         </div>

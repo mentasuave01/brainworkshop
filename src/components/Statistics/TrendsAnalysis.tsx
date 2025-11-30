@@ -1,11 +1,11 @@
 import { Component, createEffect, onCleanup, createMemo } from 'solid-js';
-import Chart from 'chart.js/auto';
+import { BarChart } from 'chartist';
 import { gameStore } from '../../stores/gameStore';
 import { Session } from '../../types';
 
 const TrendsAnalysis: Component = () => {
-    let canvasRef: HTMLCanvasElement | undefined;
-    let chartInstance: Chart | null = null;
+    let chartContainer: HTMLDivElement | undefined;
+    let chartInstance: BarChart | null = null;
 
     const activeProfile = createMemo(() =>
         gameStore.profiles.find(p => p.id === gameStore.activeProfileId)
@@ -13,7 +13,7 @@ const TrendsAnalysis: Component = () => {
 
     const trendsData = createMemo(() => {
         const profile = activeProfile();
-        if (!profile) return { labels: [], data: [] };
+        if (!profile) return { labels: [], series: [] };
 
         // Aggregate scores by modality
         const modalityStats = {
@@ -59,85 +59,37 @@ const TrendsAnalysis: Component = () => {
             modalityStats.arithmetic.count > 0 ? modalityStats.arithmetic.total / modalityStats.arithmetic.count : 0,
         ];
 
-        return { labels, data };
+        return { labels, series: [data] };
     });
 
     createEffect(() => {
-        if (!canvasRef) return;
+        if (!chartContainer) return;
 
-        const { labels, data } = trendsData();
+        const { labels, series } = trendsData();
 
         if (chartInstance) {
-            chartInstance.destroy();
+            chartInstance.detach();
         }
 
-        const ctx = canvasRef.getContext('2d');
-        if (!ctx) return;
-
-        chartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Average Score (%)',
-                    data: data,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.5)',
-                        'rgba(54, 162, 235, 0.5)',
-                        'rgba(255, 206, 86, 0.5)',
-                        'rgba(75, 192, 192, 0.5)',
-                        'rgba(153, 102, 255, 0.5)',
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                    ],
-                    borderWidth: 1
-                }]
+        chartInstance = new BarChart(chartContainer, {
+            labels: labels,
+            series: series
+        }, {
+            high: 100,
+            low: 0,
+            axisY: {
+                onlyInteger: true,
+                offset: 20
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        title: {
-                            display: true,
-                            text: 'Score (%)',
-                            color: '#9ca3af'
-                        },
-                        grid: {
-                            color: '#374151'
-                        },
-                        ticks: {
-                            color: '#9ca3af'
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            color: '#9ca3af'
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                }
+            chartPadding: {
+                right: 40
             }
         });
     });
 
     onCleanup(() => {
         if (chartInstance) {
-            chartInstance.destroy();
+            chartInstance.detach();
         }
     });
 
@@ -145,7 +97,7 @@ const TrendsAnalysis: Component = () => {
         <div class="w-full h-96 bg-gray-800 p-4 rounded-lg shadow-lg">
             <h2 class="text-xl font-bold text-white mb-4">Performance by Modality</h2>
             <div class="relative h-80 w-full">
-                <canvas ref={canvasRef} />
+                <div ref={chartContainer} class="ct-chart ct-perfect-fourth" />
             </div>
         </div>
     );

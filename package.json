@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "@types/chartist": "^0.11.1",
     "vite": "^7.2.4",
     "vite-plugin-solid": "^2.11.10"
   },
@@ -18,7 +19,7 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "chart.js": "^4.5.1",
+    "chartist": "^1.5.0",
     "solid-js": "^1.9.10"
   }
 }
