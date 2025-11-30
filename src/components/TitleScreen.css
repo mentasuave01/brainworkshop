@@ -170,11 +170,7 @@
     padding: 16px;
   }
 
-  .button-group {
-    flex-direction: column;
-    width: 100%;
-    gap: 15px;
-  }
+
 
   .primary-button,
   .secondary-button {
