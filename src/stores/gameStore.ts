@@ -344,6 +344,12 @@ export const gameActions = {
     if (activeProfileId) {
       setGameStore('activeProfileId', activeProfileId);
     }
+
+    // If no profiles exist, create a default one
+    if (gameStore.profiles.length === 0) {
+      const defaultProfileId = gameActions.createProfile('default');
+      gameActions.setActiveProfile(defaultProfileId);
+    }
   },
 
   // Reset to title screen
