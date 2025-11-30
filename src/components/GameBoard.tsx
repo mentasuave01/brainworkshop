@@ -12,36 +12,55 @@ const GameBoard = () => {
   const currentTrial = () => gameActions.getCurrentTrial();
   const profile = () => gameActions.getActiveProfile();
 
-  // Keyboard handler
-  const handleKeyDown = (e: KeyboardEvent) => {
+  // Input handler
+  const handleInput = (type: 'position' | 'sound' | 'color' | 'visual' | 'pause') => {
     // Resume audio context on first interaction
     audioSystem.resume();
 
-    // If paused, only listen for ESC to resume (handled by PauseModal's own listener or here if we want)
-    // Actually, if we use PauseModal, it can handle the resume logic via props.
-    // But we need to prevent other keys from working while paused.
     if (gameStore.isPaused) {
-      // We can let ESC fall through if we want to toggle it here, 
-      // but PauseModal handles ESC to resume too.
-      // Let's just return to disable game controls.
+      if (type === 'pause') {
+        // If we wanted to toggle pause here, we could.
+        // But currently pause is handled by ESC or the modal.
+      }
       return;
     }
 
-    switch (e.key.toUpperCase()) {
-      case 'A':
+    switch (type) {
+      case 'position':
         gameActions.recordResponse('position', true);
         break;
-      case 'L':
+      case 'sound':
         gameActions.recordResponse('sound', true);
         break;
-      case 'F':
+      case 'color':
         gameActions.recordResponse('color', true);
         break;
-      case 'S':
+      case 'visual':
         gameActions.recordResponse('visual', true);
         break;
-      case 'ESCAPE':
+      case 'pause':
         gameActions.pauseSession();
+        break;
+    }
+  };
+
+  // Keyboard handler
+  const handleKeyDown = (e: KeyboardEvent) => {
+    switch (e.key.toUpperCase()) {
+      case 'A':
+        handleInput('position');
+        break;
+      case 'L':
+        handleInput('sound');
+        break;
+      case 'F':
+        handleInput('color');
+        break;
+      case 'S':
+        handleInput('visual');
+        break;
+      case 'ESCAPE':
+        handleInput('pause');
         break;
     }
   };
@@ -91,17 +110,13 @@ const GameBoard = () => {
     window.addEventListener('click', () => audioSystem.resume());
 
     // Start music
-    const p = profile();
-    if (p && p.config.useMusic) {
-      // Determine category based on performance or random?
-      // Original game might change music based on level.
-      // For now, let's pick 'good' as default, or random.
-      // Or maybe 'advance' for higher levels?
-      // Let's just pick random for now.
-      const categories = ['advance', 'good', 'great'] as const;
-      const category = categories[Math.floor(Math.random() * categories.length)];
-      musicSystem.play(category);
-    }
+    // Music is now handled in ResultScreen.tsx as per user request
+    // const p = profile();
+    // if (p && p.config.useMusic) {
+    //   const categories = ['advance', 'good', 'great'] as const;
+    //   const category = categories[Math.floor(Math.random() * categories.length)];
+    //   musicSystem.play(category);
+    // }
   });
 
   onCleanup(() => {
@@ -181,12 +196,27 @@ const GameBoard = () => {
 
 
       <div class="controls-hint">
-        <span classList={{ active: !profile()?.config.disableVisualInputConfirmation && !!currentTrial()?.positionMatch }}>A: Position</span>
-        <span classList={{ active: !profile()?.config.disableVisualInputConfirmation && !!currentTrial()?.soundMatch }}>L: Sound</span>
+        <span
+          classList={{ active: !profile()?.config.disableVisualInputConfirmation && !!currentTrial()?.positionMatch }}
+          onClick={() => handleInput('position')}
+        >
+          A: Position
+        </span>
+        <span
+          classList={{ active: !profile()?.config.disableVisualInputConfirmation && !!currentTrial()?.soundMatch }}
+          onClick={() => handleInput('sound')}
+        >
+          L: Sound
+        </span>
         {GAME_MODE_CONFIGS[gameStore.currentSession?.gameMode || 'dual-nback'].modalities.includes('color') && (
-          <span classList={{ active: !profile()?.config.disableVisualInputConfirmation && !!currentTrial()?.colorMatch }}>F: Color</span>
+          <span
+            classList={{ active: !profile()?.config.disableVisualInputConfirmation && !!currentTrial()?.colorMatch }}
+            onClick={() => handleInput('color')}
+          >
+            F: Color
+          </span>
         )}
-        <span>ESC: Pause</span>
+        <span onClick={() => handleInput('pause')}>ESC: Pause</span>
       </div>
     </div >
   );

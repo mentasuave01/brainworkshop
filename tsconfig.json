@@ -9,9 +9,11 @@
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "types": [
-      "vite/client"
+      "vite/client",
+      "bun-types"
     ],
     "noEmit": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "skipLibCheck": true
   }
 }

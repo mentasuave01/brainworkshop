@@ -328,14 +328,22 @@ export function calculateSessionScore(session: Session): {
   let arithmeticTotal = 0;
 
   for (const trial of session.trials) {
+    // Skip the first n trials as they cannot be matches
+    if (trial.index < session.nBackLevel) continue;
+
     const check = checkTrialResponse(trial);
 
     if (modalities.includes('position')) {
       if (session.config.jaeggiMode) {
-        // In Jaeggi mode, count non-matches with no input as correct
-        if (trial.positionShouldMatch || trial.positionMatch !== null) {
-          positionTotal++;
-          if (check.positionCorrect) positionCorrect++;
+        // In Jaeggi mode, calculate accuracy: (TP + TN) / Total
+        // Count every trial
+        positionTotal++;
+
+        // Check if user response matches expected outcome
+        // Treat null input as false (no response)
+        const userResponse = trial.positionMatch === true;
+        if (userResponse === trial.positionShouldMatch) {
+          positionCorrect++;
         }
       } else {
         // Standard mode: only count if user made an input or there was a match
@@ -348,9 +356,10 @@ export function calculateSessionScore(session: Session): {
 
     if (modalities.includes('sound')) {
       if (session.config.jaeggiMode) {
-        if (trial.soundShouldMatch || trial.soundMatch !== null) {
-          soundTotal++;
-          if (check.soundCorrect) soundCorrect++;
+        soundTotal++;
+        const userResponse = trial.soundMatch === true;
+        if (userResponse === trial.soundShouldMatch) {
+          soundCorrect++;
         }
       } else {
         if (trial.soundShouldMatch || trial.soundMatch !== null) {
@@ -361,16 +370,32 @@ export function calculateSessionScore(session: Session): {
     }
 
     if (modalities.includes('color') && check.colorCorrect !== undefined) {
-      if (trial.colorShouldMatch || trial.colorMatch !== null) {
+      if (session.config.jaeggiMode) {
         colorTotal++;
-        if (check.colorCorrect) colorCorrect++;
+        const userResponse = trial.colorMatch === true;
+        if (userResponse === trial.colorShouldMatch) {
+          colorCorrect++;
+        }
+      } else {
+        if (trial.colorShouldMatch || trial.colorMatch !== null) {
+          colorTotal++;
+          if (check.colorCorrect) colorCorrect++;
+        }
       }
     }
 
     if (modalities.includes('visual') && check.visualCorrect !== undefined) {
-      if (trial.visualShouldMatch || trial.visualMatch !== null) {
+      if (session.config.jaeggiMode) {
         visualTotal++;
-        if (check.visualCorrect) visualCorrect++;
+        const userResponse = trial.visualMatch === true;
+        if (userResponse === trial.visualShouldMatch) {
+          visualCorrect++;
+        }
+      } else {
+        if (trial.visualShouldMatch || trial.visualMatch !== null) {
+          visualTotal++;
+          if (check.visualCorrect) visualCorrect++;
+        }
       }
     }
 

@@ -1,6 +1,7 @@
-import { onMount } from 'solid-js';
+import { onMount, onCleanup } from 'solid-js';
 import { gameStore, gameActions } from '../stores/gameStore';
 import { audioSystem } from '../utils/audioSystem';
+import { musicSystem } from '../utils/musicSystem';
 import { GAME_MODE_CONFIGS } from '../types';
 import './ResultScreen.css';
 
@@ -13,6 +14,18 @@ const ResultScreen = () => {
     if (s && s.totalScore >= 80) {
       audioSystem.playApplause();
     }
+
+    // Play music if enabled
+    const p = profile();
+    if (p && p.config.useMusic) {
+      const categories = ['advance', 'good', 'great'] as const;
+      const category = categories[Math.floor(Math.random() * categories.length)];
+      musicSystem.play(category);
+    }
+  });
+
+  onCleanup(() => {
+    musicSystem.stop();
   });
 
   const handleContinue = () => {
