@@ -13,8 +13,7 @@
   background: white;
   border: 2px solid #4CAF50;
   border-radius: 50%;
-  width: 56px;
-  height: 56px;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -145,7 +144,7 @@
 .title-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: baseline;
   align-content: center;
   gap: 5px;
 

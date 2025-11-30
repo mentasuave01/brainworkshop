@@ -5,7 +5,11 @@
   color: white;
   display: flex;
   flex-direction: column;
-  justify-content: space-around
+  justify-content: space-around;
+
+  @media (max-width: 600px) {
+    justify-content: center;
+  }
 }
 
 
@@ -139,6 +143,50 @@
   box-shadow: 0 0 10px rgba(100, 149, 237, 0.3);
 }
 
+
+
+@media (max-width: 600px) {
+  .game-grid {
+    max-width: 90vw;
+    margin: 10px auto;
+  }
+
+  .sound-indicator {
+    font-size: 48px;
+    padding: 10px 20px;
+  }
+
+  .visual-cue {
+    font-size: 32px;
+  }
+
+  .arithmetic-display .number {
+    font-size: 48px;
+  }
+
+  .arithmetic-display .operation {
+    font-size: 24px;
+  }
+
+  .controls-hint {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 20px;
+  }
+
+  .controls-hint span:nth-child(3) {
+    grid-column: span 2;
+    margin-top: 50px;
+    padding: 42px;
+  }
+
+  .controls-hint span {
+    font-size: 14px;
+    padding: 69px;
+  }
+}
+
 @media (max-width: 480px) {
   .game-grid {
     max-width: 90vw;
@@ -163,12 +211,20 @@
   }
 
   .controls-hint {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
-    flex-wrap: wrap;
+    margin: 20px;
+  }
+
+  .controls-hint span:nth-child(3) {
+    grid-column: span 2;
+    margin-top: 50px;
+    padding: 42px;
   }
 
   .controls-hint span {
     font-size: 14px;
-    padding: 6px 12px;
+    padding: 69px;
   }
 }
