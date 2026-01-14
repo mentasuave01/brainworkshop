@@ -316,133 +316,136 @@ export function calculateSessionScore(session: Session): {
   totalScore: number;
 } {
   const modalities = GAME_MODE_CONFIGS[session.gameMode].modalities;
-  let positionCorrect = 0;
-  let positionTotal = 0;
-  let soundCorrect = 0;
-  let soundTotal = 0;
-  let colorCorrect = 0;
-  let colorTotal = 0;
-  let visualCorrect = 0;
-  let visualTotal = 0;
-  let arithmeticCorrect = 0;
-  let arithmeticTotal = 0;
+  
+  // Track stats per modality
+  const stats = {
+    position: { correct: 0, total: 0 },
+    sound: { correct: 0, total: 0 },
+    color: { correct: 0, total: 0 },
+    visual: { correct: 0, total: 0 },
+    arithmetic: { correct: 0, total: 0 },
+  };
 
   for (const trial of session.trials) {
     // Skip the first n trials as they cannot be matches
     if (trial.index < session.nBackLevel) continue;
 
     const check = checkTrialResponse(trial);
+    const isJaeggi = session.config.jaeggiMode;
 
-    if (modalities.includes('position')) {
-      if (session.config.jaeggiMode) {
-        // In Jaeggi mode, calculate accuracy: (TP + TN) / Total
-        // Count every trial
-        positionTotal++;
-
-        // Check if user response matches expected outcome
-        // Treat null input as false (no response)
-        const userResponse = trial.positionMatch === true;
-        if (userResponse === trial.positionShouldMatch) {
-          positionCorrect++;
+    // Helper to process modality scoring
+    const processModality = (
+      modality: 'position' | 'sound' | 'color' | 'visual' | 'arithmetic',
+      shouldMatch: boolean | undefined,
+      match: boolean | null | undefined,
+      isCorrect: boolean | undefined
+    ) => {
+      // In Jaeggi mode, we count every trial and verify accuracy (True Positive + True Negative)
+      if (isJaeggi) {
+        stats[modality].total++;
+        // User response is true if they pressed match, false otherwise
+        const userResponse = match === true;
+        // Correct if response matches expectation
+        // If shouldMatch is undefined (e.g. arithmetic not active), we shouldn't be here really,
+        // but for safety treat undefined as false.
+        if (userResponse === (shouldMatch || false)) {
+          stats[modality].correct++;
         }
       } else {
-        // Standard mode: only count if user made an input or there was a match
-        if (trial.positionShouldMatch || trial.positionMatch !== null) {
-          positionTotal++;
-          if (check.positionCorrect) positionCorrect++;
+        // Standard mode: Signal Detection Theory (SDT) simplified
+        // Count trial ONLY if:
+        // 1. It was a Target (shouldMatch is true) -> Checks for Hit (Correct) or Miss (Wrong)
+        // 2. OR User claimed it was a Target (match is true) -> Checks for False Alarm (Wrong) or Hit (Correct)
+        // Correct Rejections (shouldMatch=false, match=null/false) are NOT counted in the total.
+        
+        const userSaidYes = match === true;
+        
+        if ((shouldMatch === true) || userSaidYes) {
+          stats[modality].total++;
+          if (isCorrect === true) {
+            stats[modality].correct++;
+          }
         }
       }
+    };
+
+    if (modalities.includes('position')) {
+      processModality('position', trial.positionShouldMatch, trial.positionMatch, check.positionCorrect);
     }
 
     if (modalities.includes('sound')) {
-      if (session.config.jaeggiMode) {
-        soundTotal++;
-        const userResponse = trial.soundMatch === true;
-        if (userResponse === trial.soundShouldMatch) {
-          soundCorrect++;
-        }
-      } else {
-        if (trial.soundShouldMatch || trial.soundMatch !== null) {
-          soundTotal++;
-          if (check.soundCorrect) soundCorrect++;
-        }
-      }
+      processModality('sound', trial.soundShouldMatch, trial.soundMatch, check.soundCorrect);
     }
 
     if (modalities.includes('color') && check.colorCorrect !== undefined) {
-      if (session.config.jaeggiMode) {
-        colorTotal++;
-        const userResponse = trial.colorMatch === true;
-        if (userResponse === trial.colorShouldMatch) {
-          colorCorrect++;
-        }
-      } else {
-        if (trial.colorShouldMatch || trial.colorMatch !== null) {
-          colorTotal++;
-          if (check.colorCorrect) colorCorrect++;
-        }
-      }
+      processModality('color', trial.colorShouldMatch, trial.colorMatch, check.colorCorrect);
     }
 
     if (modalities.includes('visual') && check.visualCorrect !== undefined) {
-      if (session.config.jaeggiMode) {
-        visualTotal++;
-        const userResponse = trial.visualMatch === true;
-        if (userResponse === trial.visualShouldMatch) {
-          visualCorrect++;
-        }
-      } else {
-        if (trial.visualShouldMatch || trial.visualMatch !== null) {
-          visualTotal++;
-          if (check.visualCorrect) visualCorrect++;
-        }
-      }
+      processModality('visual', trial.visualShouldMatch, trial.visualMatch, check.visualCorrect);
     }
 
     if (trial.arithmeticCorrectAnswer && check.arithmeticCorrect !== undefined) {
-      arithmeticTotal++;
-      if (check.arithmeticCorrect) arithmeticCorrect++;
+      // Arithmetic is special, usually always requires answer? 
+      // Current logic treats it like others.
+      // Assuming Standard mode logic applies (only count if answer provided or needed)
+      stats.arithmetic.total++;
+      if (check.arithmeticCorrect) stats.arithmetic.correct++;
     }
   }
 
   const scores: any = {};
 
-  if (positionTotal > 0) {
-    scores.positionScore = (positionCorrect / positionTotal) * 100;
-  }
-  if (soundTotal > 0) {
-    scores.soundScore = (soundCorrect / soundTotal) * 100;
-  }
-  if (colorTotal > 0) {
-    scores.colorScore = (colorCorrect / colorTotal) * 100;
-  }
-  if (visualTotal > 0) {
-    scores.visualScore = (visualCorrect / visualTotal) * 100;
-  }
-  if (arithmeticTotal > 0) {
-    scores.arithmeticScore = (arithmeticCorrect / arithmeticTotal) * 100;
-  }
+  // Calculate individual modality scores
+  if (stats.position.total > 0) scores.positionScore = (stats.position.correct / stats.position.total) * 100;
+  if (stats.sound.total > 0) scores.soundScore = (stats.sound.correct / stats.sound.total) * 100;
+  if (stats.color.total > 0) scores.colorScore = (stats.color.correct / stats.color.total) * 100;
+  if (stats.visual.total > 0) scores.visualScore = (stats.visual.correct / stats.visual.total) * 100;
+  if (stats.arithmetic.total > 0) scores.arithmeticScore = (stats.arithmetic.correct / stats.arithmetic.total) * 100;
 
   // Total score calculation
   if (session.config.jaeggiMode) {
-    // Jaeggi mode: use minimum of position and sound scores
-    scores.totalScore = Math.min(
-      scores.positionScore || 100,
-      scores.soundScore || 100
-    );
+    // Jaeggi mode: use minimum of position and sound scores (or whatever modalities are active)
+    const activeScores = [];
+    if (modalities.includes('position')) activeScores.push(scores.positionScore !== undefined ? scores.positionScore : 0);
+    if (modalities.includes('sound')) activeScores.push(scores.soundScore !== undefined ? scores.soundScore : 0);
+    if (modalities.includes('color')) activeScores.push(scores.colorScore !== undefined ? scores.colorScore : 0);
+    if (modalities.includes('visual')) activeScores.push(scores.visualScore !== undefined ? scores.visualScore : 0);
+    
+    scores.totalScore = activeScores.length > 0 ? Math.min(...activeScores) : 0;
   } else {
-    // Standard mode: average of all modality scores
-    const allScores = [
-      scores.positionScore,
-      scores.soundScore,
-      scores.colorScore,
-      scores.visualScore,
-      scores.arithmeticScore,
-    ].filter((s) => s !== undefined) as number[];
+    // Standard mode: Sum of all Rights / Sum of all Wrongs (Total Considered)
+    // Score = TotalCorrect / TotalConsidered
+    
+    let grandTotalCorrect = 0;
+    let grandTotalConsidered = 0;
+
+    // Only sum for active modalities
+    if (modalities.includes('position')) {
+        grandTotalCorrect += stats.position.correct;
+        grandTotalConsidered += stats.position.total;
+    }
+    if (modalities.includes('sound')) {
+        grandTotalCorrect += stats.sound.correct;
+        grandTotalConsidered += stats.sound.total;
+    }
+    if (modalities.includes('color')) {
+        grandTotalCorrect += stats.color.correct;
+        grandTotalConsidered += stats.color.total;
+    }
+    if (modalities.includes('visual')) {
+        grandTotalCorrect += stats.visual.correct;
+        grandTotalConsidered += stats.visual.total;
+    }
+    // Arithmetic might be mixed in
+    if (modalities.includes('arithmetic') || session.gameMode.includes('arithmetic')) {
+         grandTotalCorrect += stats.arithmetic.correct;
+         grandTotalConsidered += stats.arithmetic.total;
+    }
 
     scores.totalScore =
-      allScores.length > 0
-        ? allScores.reduce((sum, s) => sum + s, 0) / allScores.length
+      grandTotalConsidered > 0
+        ? (grandTotalCorrect / grandTotalConsidered) * 100
         : 0;
   }
 
