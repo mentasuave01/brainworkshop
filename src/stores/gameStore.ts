@@ -21,6 +21,7 @@ interface GameStore {
   isPaused: boolean;
   showingResult: boolean;
   isManualMode: boolean;
+  fixLevel: boolean;
 
   // Timing
   trialStartTime: number;
@@ -36,6 +37,7 @@ const [gameStore, setGameStore] = createStore<GameStore>({
   isPaused: false,
   showingResult: false,
   isManualMode: false,
+  fixLevel: false,
   trialStartTime: 0,
   timeRemaining: 0,
 });
@@ -99,14 +101,12 @@ export const gameActions = {
   },
 
   // Session management
-  startNewSession(gameMode?: GameMode, manualMode: boolean = false) {
+  startNewSession(gameMode?: GameMode, manualMode: boolean = false, fixLevel: boolean = false) {
     const profile = gameActions.getActiveProfile();
     if (!profile) return;
 
     const mode = gameMode || profile.currentGameMode;
-    const nBackLevel = manualMode
-      ? profile.currentNBackLevel
-      : GAME_MODE_CONFIGS[mode].startingNBack;
+    const nBackLevel = profile.currentNBackLevel;
 
     const trials = generateTrials(mode, nBackLevel, profile.config);
 
@@ -129,13 +129,14 @@ export const gameActions = {
       isPaused: false,
       showingResult: false,
       isManualMode: manualMode,
+      fixLevel: fixLevel,
       trialStartTime: Date.now(),
       timeRemaining: profile.config.timePerTrial,
     });
   },
 
   recordResponse(
-    modality: 'position' | 'sound' | 'color' | 'visual',
+    modality: 'position' | 'sound' | 'color' | 'visual' | 'shape',
     value: boolean
   ) {
     if (!gameStore.currentSession) return;
@@ -195,9 +196,9 @@ export const gameActions = {
       ...scores,
     }));
 
-    // Update profile stats
+    // Update profile stats (only adjust level if not in fixLevel mode)
     const profile = gameActions.getActiveProfile();
-    if (profile && !gameStore.isManualMode) {
+    if (profile && !gameStore.fixLevel) {
       // Determine next level
       const { nextLevel, newStrikeCount } = determineNextLevel(
         gameStore.currentSession!.nBackLevel,
@@ -279,6 +280,20 @@ export const gameActions = {
       'currentNBackLevel',
       newLevel
     );
+  },
+
+  setNBackLevel(level: number) {
+    const profile = gameActions.getActiveProfile();
+    if (!profile) return;
+
+    const clampedLevel = Math.max(1, Math.min(9, level));
+    setGameStore(
+      'profiles',
+      (p) => p.id === profile.id,
+      'currentNBackLevel',
+      clampedLevel
+    );
+    gameActions.saveToLocalStorage();
   },
 
   setGameMode(mode: GameMode) {

@@ -4,12 +4,14 @@ import type {
   GameConfig,
   Session,
   ModalityType,
+  ShapeType,
 } from '../types';
 import {
   LETTERS,
   NUMBERS,
   NATO,
   COLORS,
+  SHAPES,
   POSITIONS,
   ARITHMETIC_OPERATIONS,
   GAME_MODE_CONFIGS,
@@ -47,6 +49,7 @@ export function generateTrials(
       soundMatch: null,
       colorMatch: null,
       visualMatch: null,
+      shapeMatch: null,
       positionShouldMatch: false,
       soundShouldMatch: false,
       timestamp: 0,
@@ -56,6 +59,12 @@ export function generateTrials(
     if (modalities.includes('color')) {
       trial.color = COLORS[Math.floor(Math.random() * COLORS.length)];
       trial.colorShouldMatch = false;
+    }
+
+    // Add shape for quad mode
+    if (modalities.includes('shape')) {
+      trial.shape = SHAPES[Math.floor(Math.random() * SHAPES.length)];
+      trial.shapeShouldMatch = false;
     }
 
     // Add visual cue for combination modes
@@ -90,6 +99,11 @@ export function generateTrials(
       if (matchPatterns.color?.[i] && trial.color && nBackTrial.color) {
         trial.color = nBackTrial.color;
         trial.colorShouldMatch = true;
+      }
+
+      if (matchPatterns.shape?.[i] && trial.shape && nBackTrial.shape) {
+        trial.shape = nBackTrial.shape;
+        trial.shapeShouldMatch = true;
       }
 
       if (matchPatterns.visual?.[i] && trial.visualCue && nBackTrial.visualCue) {
@@ -127,6 +141,7 @@ function generateJaeggiMatchPattern(
   sound: boolean[];
   color?: boolean[];
   visual?: boolean[];
+  shape?: boolean[];
 } {
   const pattern = {
     position: Array(numTrials).fill(false),
@@ -182,12 +197,14 @@ function generateRandomMatchPattern(
   sound: boolean[];
   color?: boolean[];
   visual?: boolean[];
+  shape?: boolean[];
 } {
   const pattern = {
     position: Array(numTrials).fill(false),
     sound: Array(numTrials).fill(false),
     color: Array(numTrials).fill(false),
     visual: Array(numTrials).fill(false),
+    shape: Array(numTrials).fill(false),
   };
 
   for (let i = nBackLevel; i < numTrials; i++) {
@@ -203,6 +220,9 @@ function generateRandomMatchPattern(
     }
     if (Math.random() < 0.25) {
       pattern.visual[i] = true;
+    }
+    if (Math.random() < 0.25) {
+      pattern.shape[i] = true;
     }
 
     // Add interference (trick trials)
@@ -282,6 +302,7 @@ export function checkTrialResponse(trial: Trial): {
   soundCorrect: boolean;
   colorCorrect?: boolean;
   visualCorrect?: boolean;
+  shapeCorrect?: boolean;
   arithmeticCorrect?: boolean;
 } {
   return {
@@ -296,6 +317,10 @@ export function checkTrialResponse(trial: Trial): {
     visualCorrect:
       trial.visualShouldMatch !== undefined
         ? trial.visualMatch === trial.visualShouldMatch
+        : undefined,
+    shapeCorrect:
+      trial.shapeShouldMatch !== undefined
+        ? trial.shapeMatch === trial.shapeShouldMatch
         : undefined,
     arithmeticCorrect:
       trial.arithmeticCorrectAnswer
@@ -312,17 +337,19 @@ export function calculateSessionScore(session: Session): {
   soundScore?: number;
   colorScore?: number;
   visualScore?: number;
+  shapeScore?: number;
   arithmeticScore?: number;
   totalScore: number;
 } {
   const modalities = GAME_MODE_CONFIGS[session.gameMode].modalities;
-  
+
   // Track stats per modality
   const stats = {
     position: { correct: 0, total: 0 },
     sound: { correct: 0, total: 0 },
     color: { correct: 0, total: 0 },
     visual: { correct: 0, total: 0 },
+    shape: { correct: 0, total: 0 },
     arithmetic: { correct: 0, total: 0 },
   };
 
@@ -335,7 +362,7 @@ export function calculateSessionScore(session: Session): {
 
     // Helper to process modality scoring
     const processModality = (
-      modality: 'position' | 'sound' | 'color' | 'visual' | 'arithmetic',
+      modality: 'position' | 'sound' | 'color' | 'visual' | 'shape' | 'arithmetic',
       shouldMatch: boolean | undefined,
       match: boolean | null | undefined,
       isCorrect: boolean | undefined
@@ -357,9 +384,9 @@ export function calculateSessionScore(session: Session): {
         // 1. It was a Target (shouldMatch is true) -> Checks for Hit (Correct) or Miss (Wrong)
         // 2. OR User claimed it was a Target (match is true) -> Checks for False Alarm (Wrong) or Hit (Correct)
         // Correct Rejections (shouldMatch=false, match=null/false) are NOT counted in the total.
-        
+
         const userSaidYes = match === true;
-        
+
         if ((shouldMatch === true) || userSaidYes) {
           stats[modality].total++;
           if (isCorrect === true) {
@@ -385,6 +412,10 @@ export function calculateSessionScore(session: Session): {
       processModality('visual', trial.visualShouldMatch, trial.visualMatch, check.visualCorrect);
     }
 
+    if (modalities.includes('shape') && check.shapeCorrect !== undefined) {
+      processModality('shape', trial.shapeShouldMatch, trial.shapeMatch, check.shapeCorrect);
+    }
+
     if (trial.arithmeticCorrectAnswer && check.arithmeticCorrect !== undefined) {
       // Arithmetic is special, usually always requires answer? 
       // Current logic treats it like others.
@@ -401,6 +432,7 @@ export function calculateSessionScore(session: Session): {
   if (stats.sound.total > 0) scores.soundScore = (stats.sound.correct / stats.sound.total) * 100;
   if (stats.color.total > 0) scores.colorScore = (stats.color.correct / stats.color.total) * 100;
   if (stats.visual.total > 0) scores.visualScore = (stats.visual.correct / stats.visual.total) * 100;
+  if (stats.shape.total > 0) scores.shapeScore = (stats.shape.correct / stats.shape.total) * 100;
   if (stats.arithmetic.total > 0) scores.arithmeticScore = (stats.arithmetic.correct / stats.arithmetic.total) * 100;
 
   // Total score calculation
@@ -411,36 +443,41 @@ export function calculateSessionScore(session: Session): {
     if (modalities.includes('sound')) activeScores.push(scores.soundScore !== undefined ? scores.soundScore : 0);
     if (modalities.includes('color')) activeScores.push(scores.colorScore !== undefined ? scores.colorScore : 0);
     if (modalities.includes('visual')) activeScores.push(scores.visualScore !== undefined ? scores.visualScore : 0);
-    
+    if (modalities.includes('shape')) activeScores.push(scores.shapeScore !== undefined ? scores.shapeScore : 0);
+
     scores.totalScore = activeScores.length > 0 ? Math.min(...activeScores) : 0;
   } else {
     // Standard mode: Sum of all Rights / Sum of all Wrongs (Total Considered)
     // Score = TotalCorrect / TotalConsidered
-    
+
     let grandTotalCorrect = 0;
     let grandTotalConsidered = 0;
 
     // Only sum for active modalities
     if (modalities.includes('position')) {
-        grandTotalCorrect += stats.position.correct;
-        grandTotalConsidered += stats.position.total;
+      grandTotalCorrect += stats.position.correct;
+      grandTotalConsidered += stats.position.total;
     }
     if (modalities.includes('sound')) {
-        grandTotalCorrect += stats.sound.correct;
-        grandTotalConsidered += stats.sound.total;
+      grandTotalCorrect += stats.sound.correct;
+      grandTotalConsidered += stats.sound.total;
     }
     if (modalities.includes('color')) {
-        grandTotalCorrect += stats.color.correct;
-        grandTotalConsidered += stats.color.total;
+      grandTotalCorrect += stats.color.correct;
+      grandTotalConsidered += stats.color.total;
     }
     if (modalities.includes('visual')) {
-        grandTotalCorrect += stats.visual.correct;
-        grandTotalConsidered += stats.visual.total;
+      grandTotalCorrect += stats.visual.correct;
+      grandTotalConsidered += stats.visual.total;
+    }
+    if (modalities.includes('shape')) {
+      grandTotalCorrect += stats.shape.correct;
+      grandTotalConsidered += stats.shape.total;
     }
     // Arithmetic might be mixed in
     if (modalities.includes('arithmetic') || session.gameMode.includes('arithmetic')) {
-         grandTotalCorrect += stats.arithmetic.correct;
-         grandTotalConsidered += stats.arithmetic.total;
+      grandTotalCorrect += stats.arithmetic.correct;
+      grandTotalConsidered += stats.arithmetic.total;
     }
 
     scores.totalScore =

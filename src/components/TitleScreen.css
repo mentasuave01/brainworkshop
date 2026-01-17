@@ -54,6 +54,189 @@
   margin-right: 8px;
 }
 
+/* Game Mode Selector */
+.game-mode-selector {
+  background: white;
+  padding: 20px 28px;
+  border-radius: 12px;
+  margin: 16px 0;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  min-width: 320px;
+}
+
+.game-mode-selector label {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-right: 12px;
+}
+
+.game-mode-selector select {
+  padding: 10px 16px;
+  font-size: 16px;
+  border: 2px solid #4CAF50;
+  border-radius: 8px;
+  background: white;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.3s;
+  min-width: 200px;
+}
+
+.game-mode-selector select:hover {
+  border-color: #45a049;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+}
+
+.game-mode-selector select:focus {
+  outline: none;
+  border-color: #388e3c;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+.game-mode-description {
+  margin: 12px 0 0 0;
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+}
+
+.nback-level-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.nback-level-label {
+  font-size: 18px;
+  color: #333;
+}
+
+.nback-level-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #4CAF50;
+  text-align: center;
+}
+
+.level-button {
+  border: 2px solid #4CAF50;
+  background: white;
+  color: #4CAF50;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 8px 10px;
+}
+
+.level-button:hover {
+  background: #4CAF50;
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+}
+
+.level-button:active {
+  transform: scale(0.95);
+}
+
+/* Mode Toggle */
+.mode-toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.mode-label {
+  font-size: 1x;
+  font-weight: 500;
+  color: #999;
+  transition: color 0.3s;
+}
+
+.mode-label.active {
+  color: #4CAF50;
+  font-weight: 600;
+}
+
+.mode-toggle {
+  width: 42px;
+  height: 20px;
+  border-radius: 14px;
+  background: #e0e0e0;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  padding: 0;
+
+  &:hover {
+    background: #e0e0e0;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4);
+    transform: translateY(0px);
+  }
+
+}
+
+.mode-toggle.manual {
+  background: #4CAF50;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 1px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s;
+}
+
+.mode-toggle.manual .toggle-thumb {
+  transform: translateX(20px);
+}
+
+/* Fix Level Toggle */
+.fix-level-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 8px 0 0 0;
+}
+
+/* Level Info (Auto mode) */
+.nback-level-info {
+  margin: 12px 0 0 0;
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+}
+
+.nback-level-info strong {
+  color: #4CAF50;
+  font-style: normal;
+}
+
+.game-mode-selector select option.coming-soon {
+  color: #999;
+  font-style: italic;
+}
+
+.game-mode-selector select option:disabled {
+  color: #999;
+}
+
 .button-group {
   display: flex;
   gap: 20px;
@@ -73,11 +256,7 @@
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
-.primary-button:hover {
-  background: #45a049;
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-}
+
 
 .secondary-button {
   background: white;
@@ -90,11 +269,6 @@
   transition: all 0.3s;
 }
 
-.secondary-button:hover {
-  background: #f1f8f4;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
-}
 
 .instructions {
   background: white;

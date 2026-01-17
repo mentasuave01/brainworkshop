@@ -12,6 +12,32 @@
   }
 }
 
+.game-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid #333;
+}
+
+.game-type {
+  font-size: 20px;
+  font-weight: 600;
+  color: #4CAF50;
+}
+
+.game-level {
+  font-size: 24px;
+  font-weight: bold;
+  color: #FFC107;
+  background: rgba(255, 193, 7, 0.1);
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 193, 7, 0.3);
+}
+
 
 
 .game-grid {
@@ -48,10 +74,23 @@
   transform: scale(1.1);
 }
 
+/* Quad N-back specific: border only change */
+.mode-quadruple-combination .grid-square.active {
+  background: #2a2a2a;
+  border-color: #4CAF50;
+  border-width: 5px;
+  box-shadow: 0 0 15px rgba(76, 175, 80, 0.4);
+}
+
 .colored-square {
   width: 80px;
   height: 80px;
   border-radius: 4px;
+}
+
+.shape-svg {
+  width: 80px;
+  height: 80px;
 }
 
 .center-display {

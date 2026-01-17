@@ -14,7 +14,9 @@ export type GameMode =
 
 export type SoundSet = 'letters' | 'numbers' | 'nato' | 'piano' | 'morse';
 
-export type ModalityType = 'position' | 'sound' | 'color' | 'visual';
+export type ModalityType = 'position' | 'sound' | 'color' | 'visual' | 'shape';
+
+export type ShapeType = 'circle' | 'triangle' | 'square' | 'diamond';
 
 export interface GameConfig {
   // Window settings
@@ -66,6 +68,7 @@ export interface Trial {
   position: number; // 0-7 for the 8 positions
   sound: string;
   color?: string;
+  shape?: ShapeType;
   visualCue?: string;
   arithmeticOperation?: string;
   arithmeticNumber?: number;
@@ -76,6 +79,7 @@ export interface Trial {
   soundMatch: boolean | null;
   colorMatch: boolean | null;
   visualMatch: boolean | null;
+  shapeMatch: boolean | null;
   arithmeticAnswer?: string;
 
   // Correctness
@@ -83,6 +87,7 @@ export interface Trial {
   soundShouldMatch: boolean;
   colorShouldMatch?: boolean;
   visualShouldMatch?: boolean;
+  shapeShouldMatch?: boolean;
   arithmeticCorrectAnswer?: string;
 
   timestamp: number;
@@ -158,6 +163,7 @@ export interface MatchCheck {
   sound: boolean;
   color?: boolean;
   visual?: boolean;
+  shape?: boolean;
 }
 
 // Scoring types
@@ -172,6 +178,7 @@ export interface SessionScore {
   sound?: ModalityScore;
   color?: ModalityScore;
   visual?: ModalityScore;
+  shape?: ModalityScore;
   arithmetic?: ModalityScore;
   total: number;
 }
@@ -260,9 +267,9 @@ export const GAME_MODE_CONFIGS: Record<GameMode, GameModeConfig> = {
     supportsJaeggi: false,
   },
   'quadruple-combination': {
-    name: 'Quadruple Combination N-Back',
-    description: 'Position, color, visual, and auditory with cross-matching',
-    modalities: ['position', 'color', 'visual', 'sound'],
+    name: 'Quad N-Back',
+    description: 'Position, sound, color, and shape matching',
+    modalities: ['position', 'sound', 'color', 'shape'],
     startingNBack: 1,
     supportsJaeggi: false,
   },
@@ -294,5 +301,6 @@ export const LETTERS = ['C', 'H', 'K', 'L', 'Q', 'R', 'S', 'T'];
 export const NUMBERS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13'];
 export const NATO = ['ALPHA', 'BRAVO', 'CHARLIE', 'DELTA', 'ECHO', 'FOXTROT', 'GOLF', 'HOTEL'];
 export const COLORS = ['blue', 'green', 'yellow', 'red'];
+export const SHAPES: ShapeType[] = ['circle', 'triangle', 'square', 'diamond'];
 export const POSITIONS = 8; // Number of grid positions
 export const ARITHMETIC_OPERATIONS = ['plus', 'minus', 'times', 'divide'];

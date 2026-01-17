@@ -12,6 +12,7 @@
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   width: calc(100vw - 30px);
+  max-width: 600px;
 }
 
 
@@ -36,6 +37,7 @@
   background: #f9f9f9;
   border-radius: 8px;
   border: 3px solid currentColor;
+  max-width: 500px;
 }
 
 .total-score .score-value {
@@ -106,5 +108,7 @@
 
 .button-group {
   display: flex;
+  margin-top: 20px;
+  justify-content: center;
   gap: 20px;
 }

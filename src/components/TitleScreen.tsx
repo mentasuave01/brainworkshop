@@ -1,6 +1,6 @@
-import { createSignal, onMount, onCleanup, Show, createEffect } from 'solid-js';
+import { createSignal, onMount, onCleanup, Show, createEffect, For } from 'solid-js';
 import { gameStore, gameActions } from '../stores/gameStore';
-import { GAME_MODE_CONFIGS } from '../types';
+import { GAME_MODE_CONFIGS, type GameMode } from '../types';
 import { assetLoader } from '../utils/assetLoader';
 import Settings from './Settings';
 import LoadingModal from './LoadingModal';
@@ -12,6 +12,23 @@ const TitleScreen = () => {
   const [showStats, setShowStats] = createSignal(false);
   const [settingsTab, setSettingsTab] = createSignal<'game' | 'profiles'>('game');
   const [showLoading, setShowLoading] = createSignal(false);
+  const [isManualMode, setIsManualMode] = createSignal(false);
+  const [fixLevel, setFixLevel] = createSignal(false);
+
+  const handleGameModeChange = (mode: GameMode) => {
+    const currentProfile = profile();
+    if (currentProfile) {
+      gameActions.setGameMode(mode);
+    }
+  };
+
+  const handleLevelChange = (delta: number) => {
+    const currentProfile = profile();
+    if (currentProfile) {
+      const newLevel = Math.max(1, Math.min(9, currentProfile.currentNBackLevel + delta));
+      gameActions.setNBackLevel(newLevel);
+    }
+  };
 
   onMount(() => {
     // Start loading assets in background immediately
@@ -47,29 +64,16 @@ const TitleScreen = () => {
       return;
     }
 
-    const profile = gameActions.getActiveProfile();
-    if (profile) {
-      gameActions.startNewSession(profile.currentGameMode, false);
+    const currentProfile = gameActions.getActiveProfile();
+    if (currentProfile) {
+      gameActions.startNewSession(currentProfile.currentGameMode, isManualMode(), fixLevel());
     } else {
       setSettingsTab('profiles');
       setShowSettings(true);
     }
   };
 
-  const handleManualMode = () => {
-    if (!assetLoader.isReady()) {
-      setShowLoading(true);
-      return;
-    }
 
-    const profile = gameActions.getActiveProfile();
-    if (profile) {
-      gameActions.startNewSession(profile.currentGameMode, true);
-    } else {
-      setSettingsTab('profiles');
-      setShowSettings(true);
-    }
-  };
 
   const profile = () => gameActions.getActiveProfile();
 
@@ -95,16 +99,91 @@ const TitleScreen = () => {
           </button>
 
 
+
         </div>
         <h2 class="subtitle">N-Back Training</h2>
 
+        {/* Game Mode Selection */}
+        <div class="game-mode-selector">
+          <label for="game-mode-select">Mode</label>
+          <select
+            id="game-mode-select"
+            value={profile()?.currentGameMode || 'dual-nback'}
+            onChange={(e) => handleGameModeChange(e.currentTarget.value as GameMode)}
+          >
+            <For each={Object.entries(GAME_MODE_CONFIGS).sort(([modeA], [modeB]) => {
+              const enabledModes = ['dual-nback', 'triple-nback', 'quadruple-combination'];
+              const aEnabled = enabledModes.includes(modeA);
+              const bEnabled = enabledModes.includes(modeB);
+              if (aEnabled && !bEnabled) return -1;
+              if (!aEnabled && bEnabled) return 1;
+              return 0;
+            })}>
+              {([mode, config]) => {
+                const enabledModes = ['dual-nback', 'triple-nback', 'quadruple-combination'];
+                const isEnabled = enabledModes.includes(mode);
+                return (
+                  <option
+                    value={mode}
+                    disabled={!isEnabled}
+                    class={!isEnabled ? 'coming-soon' : ''}
+                  >
+                    {config.name}{!isEnabled ? ' (Coming Soon)' : ''}
+                  </option>
+                );
+              }}
+            </For>
+          </select>
+          <p class="game-mode-description">
+            {GAME_MODE_CONFIGS[profile()?.currentGameMode || 'dual-nback'].description}
+          </p>
 
+          {/* Mode Toggle */}
+          <div class="mode-toggle-container">
+            <span class={`mode-label ${!isManualMode() ? 'active' : ''}`}>Auto</span>
+            <button
+              class={`mode-toggle ${isManualMode() ? 'manual' : ''}`}
+              onClick={() => setIsManualMode(!isManualMode())}
+              title={isManualMode() ? 'Switch to Auto mode' : 'Switch to Manual mode'}
+            >
+              <span class="toggle-thumb" />
+            </button>
+            <span class={`mode-label ${isManualMode() ? 'active' : ''}`}>Manual</span>
+          </div>
+
+          {/* Level Controls - Only visible in Manual mode */}
+          <Show when={isManualMode()}>
+            <div class="nback-level-control">
+              <Show when={!fixLevel()}>
+                <button class="level-button" onClick={() => handleLevelChange(-1)} title="Decrease level">−</button>
+              </Show>
+              <span class="nback-level-value">{profile()?.currentNBackLevel || 2}-Back</span>
+              <Show when={!fixLevel()}>
+                <button class="level-button" onClick={() => handleLevelChange(1)} title="Increase level">+</button>
+              </Show>
+            </div>
+            <div class="fix-level-toggle">
+              <button
+                class={`mode-toggle ${fixLevel() ? 'manual' : ''}`}
+                onClick={() => setFixLevel(!fixLevel())}
+                title={fixLevel() ? 'Level will stay fixed' : 'Level will adjust automatically'}
+              >
+                <span class="toggle-thumb" />
+              </button>
+              <span class={`mode-label ${fixLevel() ? 'active' : ''}`}>Fixed</span>
+            </div>
+          </Show>
+
+          {/* Show current level in Auto mode */}
+          <Show when={!isManualMode()}>
+            <p class="nback-level-info">
+              <strong>{profile()?.currentNBackLevel || 2}-Back</strong> (adjusts automatically)
+            </p>
+          </Show>
+        </div>
 
         <div class="button-group">
           <button class="primary-button" onClick={handleStart}>Start Session</button>
-          <Show when={profile()?.config.showManualMode}>
-            <button class="secondary-button" onClick={handleManualMode}>Manual Mode</button>
-          </Show>
         </div>
         <a href="#" onClick={() => setShowStats(true)} >Statistics</a>
 
@@ -112,12 +191,20 @@ const TitleScreen = () => {
         <div class="instructions">
           <h3>Quick Guide</h3>
           <ul>
-            <li><strong>A</strong> - Position matches</li>
-            <li><strong>L</strong> - Sound matches</li>
-            <li><strong>F</strong> - Color matches (Triple N-Back)</li>
+            <Show when={GAME_MODE_CONFIGS[profile()?.currentGameMode || 'dual-nback'].modalities.includes('position')}>
+              <li><strong>A</strong> - Position matches</li>
+            </Show>
+            <Show when={GAME_MODE_CONFIGS[profile()?.currentGameMode || 'dual-nback'].modalities.includes('sound')}>
+              <li><strong>L</strong> - Sound matches</li>
+            </Show>
+            <Show when={GAME_MODE_CONFIGS[profile()?.currentGameMode || 'dual-nback'].modalities.includes('color')}>
+              <li><strong>F</strong> - Color matches</li>
+            </Show>
+            <Show when={GAME_MODE_CONFIGS[profile()?.currentGameMode || 'dual-nback'].modalities.includes('shape')}>
+              <li><strong>J</strong> - Shape matches</li>
+            </Show>
             <li><strong>ESC</strong> - Pause/Quit</li>
             <li><strong>Gear Icon</strong> - Settings | Statistics | Profile </li>
-
           </ul>
           <p class="help-text">
             Press the key when the current stimulus matches the one from N trials ago.

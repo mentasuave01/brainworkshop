@@ -108,12 +108,13 @@ const ResultScreen = () => {
           <p>Trials: {session()?.trials.length}</p>
           <p>Duration: {getDuration()}s</p>
         </div>
+        <div class="button-group">
+          <button onClick={handleContinue}>Next Session</button>
+          <button onClick={handleBackToMenu}>Back to Menu</button>
+        </div>
       </div>
 
-      <div class="button-group">
-        <button onClick={handleContinue}>Next Session</button>
-        <button onClick={handleBackToMenu}>Back to Menu</button>
-      </div>
+
     </div>
   );
 };

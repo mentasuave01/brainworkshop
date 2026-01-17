@@ -1,4 +1,5 @@
-import { onCleanup, onMount, createSignal } from 'solid-js';
+import { onCleanup, onMount, createSignal, Show } from 'solid-js';
+import Settings from './Settings';
 import './PauseModal.css';
 
 interface PauseModalProps {
@@ -7,16 +8,24 @@ interface PauseModalProps {
 }
 
 const PauseModal = (props: PauseModalProps) => {
-    const [selectedOption, setSelectedOption] = createSignal(0); // 0: Resume, 1: Quit
+    const [selectedOption, setSelectedOption] = createSignal(0); // 0: Resume, 1: Settings, 2: Quit
+    const [showSettings, setShowSettings] = createSignal(false);
 
     const handleKeyDown = (e: KeyboardEvent) => {
+        // Don't handle keyboard navigation when settings is open
+        if (showSettings()) return;
+
         if (e.key === 'Escape') {
             props.onResume();
-        } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-            setSelectedOption(prev => (prev === 0 ? 1 : 0));
+        } else if (e.key === 'ArrowUp') {
+            setSelectedOption(prev => (prev === 0 ? 2 : prev - 1));
+        } else if (e.key === 'ArrowDown') {
+            setSelectedOption(prev => (prev === 2 ? 0 : prev + 1));
         } else if (e.key === 'Enter') {
             if (selectedOption() === 0) {
                 props.onResume();
+            } else if (selectedOption() === 1) {
+                setShowSettings(true);
             } else {
                 props.onQuit();
             }
@@ -45,15 +54,30 @@ const PauseModal = (props: PauseModalProps) => {
                         Resume Game
                     </button>
                     <button
-                        class="quit-btn"
+                        class="settings-btn"
                         classList={{ selected: selectedOption() === 1 }}
-                        onClick={props.onQuit}
+                        onClick={() => setShowSettings(true)}
                         onMouseEnter={() => setSelectedOption(1)}
+                    >
+                        Settings
+                    </button>
+                    <button
+                        class="quit-btn"
+                        classList={{ selected: selectedOption() === 2 }}
+                        onClick={props.onQuit}
+                        onMouseEnter={() => setSelectedOption(2)}
                     >
                         Quit Session
                     </button>
                 </div>
             </div>
+            <Show when={showSettings()}>
+                <Settings
+                    isOpen={showSettings()}
+                    onClose={() => setShowSettings(false)}
+                    initialTab="game"
+                />
+            </Show>
         </div>
     );
 };

@@ -3,6 +3,7 @@ import { gameStore, gameActions } from '../stores/gameStore';
 import { audioSystem } from '../utils/audioSystem';
 import { musicSystem } from '../utils/musicSystem';
 import { GAME_MODE_CONFIGS } from '../types';
+import { Shape } from './Shapes';
 import PauseModal from './PauseModal';
 import './GameBoard.css';
 
@@ -13,7 +14,7 @@ const GameBoard = () => {
   const profile = () => gameActions.getActiveProfile();
 
   // Input handler
-  const handleInput = (type: 'position' | 'sound' | 'color' | 'visual' | 'pause') => {
+  const handleInput = (type: 'position' | 'sound' | 'color' | 'visual' | 'shape' | 'pause') => {
     // Resume audio context on first interaction
     audioSystem.resume();
 
@@ -38,6 +39,9 @@ const GameBoard = () => {
       case 'visual':
         gameActions.recordResponse('visual', true);
         break;
+      case 'shape':
+        gameActions.recordResponse('shape', true);
+        break;
       case 'pause':
         gameActions.pauseSession();
         break;
@@ -58,6 +62,9 @@ const GameBoard = () => {
         break;
       case 'S':
         handleInput('visual');
+        break;
+      case 'J':
+        handleInput('shape');
         break;
       case 'ESCAPE':
         handleInput('pause');
@@ -128,7 +135,7 @@ const GameBoard = () => {
   });
 
   return (
-    <div class="game-board">
+    <div class={`game-board mode-${gameStore.currentSession?.gameMode || 'none'}`}>
       <Show when={gameStore.isPaused}>
         <PauseModal
           onResume={() => gameActions.resumeSession()}
@@ -137,6 +144,15 @@ const GameBoard = () => {
           }}
         />
       </Show>
+
+      <div class="game-header">
+        <span class="game-type">
+          {GAME_MODE_CONFIGS[gameStore.currentSession?.gameMode || 'dual-nback'].name}
+        </span>
+        <span class="game-level">
+          {gameStore.currentSession?.nBackLevel || profile()?.currentNBackLevel || 2}-Back
+        </span>
+      </div>
 
       <div class="game-grid">
         <For each={Array(9).fill(0)}>
@@ -165,11 +181,19 @@ const GameBoard = () => {
                   visibility: isCenter && !profile()?.config.auditoryImpairment ? 'hidden' : 'visible'
                 }}
               >
-                {!isCenter && currentTrial()?.position === gamePos && currentTrial()?.color && isStimulusVisible() && (
-                  <div
-                    class="colored-square"
-                    style={{ 'background-color': currentTrial()?.color }}
-                  />
+                {!isCenter && currentTrial()?.position === gamePos && isStimulusVisible() && (
+                  currentTrial()?.shape && currentTrial()?.color ? (
+                    <Shape
+                      shape={currentTrial()!.shape!}
+                      color={currentTrial()!.color!}
+                      className="shape-svg"
+                    />
+                  ) : currentTrial()?.color ? (
+                    <div
+                      class="colored-square"
+                      style={{ 'background-color': currentTrial()?.color }}
+                    />
+                  ) : null
                 )}
               </div>
             );
@@ -196,24 +220,36 @@ const GameBoard = () => {
 
 
       <div class="controls-hint">
-        <span
-          classList={{ active: !profile()?.config.disableVisualInputConfirmation && !!currentTrial()?.positionMatch }}
-          onClick={() => handleInput('position')}
-        >
-          A: Position
-        </span>
-        <span
-          classList={{ active: !profile()?.config.disableVisualInputConfirmation && !!currentTrial()?.soundMatch }}
-          onClick={() => handleInput('sound')}
-        >
-          L: Sound
-        </span>
+        {GAME_MODE_CONFIGS[gameStore.currentSession?.gameMode || 'dual-nback'].modalities.includes('position') && (
+          <span
+            classList={{ active: !profile()?.config.disableVisualInputConfirmation && !!currentTrial()?.positionMatch }}
+            onClick={() => handleInput('position')}
+          >
+            A: Position
+          </span>
+        )}
+        {GAME_MODE_CONFIGS[gameStore.currentSession?.gameMode || 'dual-nback'].modalities.includes('sound') && (
+          <span
+            classList={{ active: !profile()?.config.disableVisualInputConfirmation && !!currentTrial()?.soundMatch }}
+            onClick={() => handleInput('sound')}
+          >
+            L: Sound
+          </span>
+        )}
         {GAME_MODE_CONFIGS[gameStore.currentSession?.gameMode || 'dual-nback'].modalities.includes('color') && (
           <span
             classList={{ active: !profile()?.config.disableVisualInputConfirmation && !!currentTrial()?.colorMatch }}
             onClick={() => handleInput('color')}
           >
             F: Color
+          </span>
+        )}
+        {GAME_MODE_CONFIGS[gameStore.currentSession?.gameMode || 'dual-nback'].modalities.includes('shape') && (
+          <span
+            classList={{ active: !profile()?.config.disableVisualInputConfirmation && !!currentTrial()?.shapeMatch }}
+            onClick={() => handleInput('shape')}
+          >
+            J: Shape
           </span>
         )}
         <span onClick={() => handleInput('pause')}>ESC: Pause</span>

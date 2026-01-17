@@ -1,6 +1,6 @@
 import { createSignal, For, Show, onMount } from 'solid-js';
 import { gameStore, gameActions } from '../stores/gameStore';
-import { GAME_MODE_CONFIGS, type GameMode, type GameConfig } from '../types';
+import { type GameConfig } from '../types';
 import ProfileManager from './ProfileManager';
 import './Settings.css';
 
@@ -24,12 +24,6 @@ const Settings = (props: SettingsProps) => {
 
   // Also watch for prop changes if the modal stays mounted but props update
   // (though usually it's conditionally rendered)
-
-  const handleGameModeChange = (mode: GameMode) => {
-    if (profile()) {
-      gameActions.setGameMode(mode);
-    }
-  };
 
   const handleConfigChange = (key: string, value: any) => {
     if (profile()) {
@@ -64,24 +58,6 @@ const Settings = (props: SettingsProps) => {
 
           <div class="settings-content">
             <Show when={activeTab() === 'game'}>
-              {/* Game Mode Selection */}
-              <div class="settings-section">
-                <h3>Game Mode</h3>
-                <select
-                  value={profile()?.currentGameMode || 'dual-nback'}
-                  onChange={(e) => handleGameModeChange(e.currentTarget.value as GameMode)}
-                >
-                  <For each={Object.entries(GAME_MODE_CONFIGS)}>
-                    {([mode, config]) => (
-                      <option value={mode}>{config.name}</option>
-                    )}
-                  </For>
-                </select>
-                <p class="description">
-                  {GAME_MODE_CONFIGS[profile()?.currentGameMode || 'dual-nback'].description}
-                </p>
-              </div>
-
               {/* Session Parameters */}
               <div class="settings-section">
                 <h3>Session Parameters</h3>

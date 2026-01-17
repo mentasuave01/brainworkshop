@@ -75,6 +75,23 @@
   transform: scale(1.02);
 }
 
+/* Settings Button Specifics */
+.settings-btn {
+  border-left: 4px solid #2196F3;
+}
+
+.settings-btn:hover {
+  background-color: #2e3340;
+}
+
+.settings-btn.selected {
+  background-color: #0d47a1;
+  color: #fff;
+  border-color: #2196F3;
+  box-shadow: 0 0 15px rgba(33, 150, 243, 0.3);
+  transform: scale(1.02);
+}
+
 /* Quit Button Specifics */
 .quit-btn {
   border-left: 4px solid #f44336;
